@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,9 +20,6 @@ public class Account {
     private String lastName;
     private String email;
     private String password;
-
-    @OneToMany(mappedBy = "account")
-    public List<Post> posts;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

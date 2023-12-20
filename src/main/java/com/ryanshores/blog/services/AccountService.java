@@ -17,9 +17,9 @@ public class AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void save(Account account) {
+    public Account save(Account account) {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-        accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
     public Optional<Account> findByEmail(String email) {

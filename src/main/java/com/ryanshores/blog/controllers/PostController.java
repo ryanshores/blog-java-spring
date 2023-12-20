@@ -4,26 +4,26 @@ import com.ryanshores.blog.models.Account;
 import com.ryanshores.blog.models.Post;
 import com.ryanshores.blog.services.AccountService;
 import com.ryanshores.blog.services.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @Controller
 public class PostController {
 
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
+
+    public PostController(PostService postService, AccountService accountService) {
+        this.postService = postService;
+        this.accountService = accountService;
+    }
+
+    // Views
 
     @GetMapping("/posts/{id}")
     public String getPost(@PathVariable Long id, Model model) {
@@ -93,7 +93,7 @@ public class PostController {
 
         var optionalPost = postService.getById(id);
 
-        optionalPost.ifPresent(foundPost -> postService.delete(foundPost));
+        optionalPost.ifPresent(postService::delete);
 
         return optionalPost.isPresent() ? "redirect:/" : "404";
     }

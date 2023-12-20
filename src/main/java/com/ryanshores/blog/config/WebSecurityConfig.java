@@ -3,7 +3,9 @@ package com.ryanshores.blog.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
-    private static final String[] WHITELIST = { "/", "/register", "/h2-console/*" };
+    private static final String[] WHITELIST = { "/", "/register", "/h2-console/*"};
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -26,12 +28,17 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public static AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(WHITELIST)
-                .permitAll()
+                .requestMatchers(WHITELIST).permitAll()
                 .requestMatchers(HttpMethod.GET,"/posts/*").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .anyRequest()
                 .authenticated()
             )
@@ -47,6 +54,8 @@ public class WebSecurityConfig {
             .logout(logout -> logout
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/login?logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
             )
             .httpBasic(Customizer.withDefaults());
 

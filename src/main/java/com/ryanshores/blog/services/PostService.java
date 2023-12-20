@@ -23,17 +23,21 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public void save(Post post) {
+    public Post save(Post post) {
         if (post.getId() == null) {
             post.setCreatedAt(LocalDateTime.now());
         }
 
         post.setModifiedAt(LocalDateTime.now());
 
-        postRepository.save(post);
+        return postRepository.save(post);
     }
 
     public void delete(Post post) {
         postRepository.delete(post);
+    }
+
+    public void deleteById(Long id) {
+        postRepository.deleteById(id);
     }
 }
