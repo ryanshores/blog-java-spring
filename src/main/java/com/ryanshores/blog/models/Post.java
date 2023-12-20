@@ -2,6 +2,7 @@ package com.ryanshores.blog.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -22,9 +23,22 @@ public class Post {
 
     private LocalDateTime createdAt;
 
-    @NotNull
+    private LocalDateTime modifiedAt;
+
+    @NonNull
     @ManyToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
     private Account account;
+
+    @Override
+    public String toString() {
+        return "Post{" +
+            "id=" + id +
+            ", title='" + title + "'" +
+            ", body='" + body + "'" +
+            ", createdAt='" + createdAt + "'" +
+            ", modifiedAt='" + modifiedAt + "'" +
+        "}";
+    }
 
 }

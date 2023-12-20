@@ -19,6 +19,7 @@
                     </h2>
                     <h5 th:text="'Written by ' + ${post.account.firstName}">Account First Name</h5>
                     <h5 th:text="'Published on ' + ${post.createdAt}">Created At</h5>
+                    <h5 th:text="'Updated on ' + ${post.modifiedAt}">Updated At</h5>
                     <p th:text="${post.body}">body text</p>
                 </div>
 

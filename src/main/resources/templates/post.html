@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Blog :: Post</title>
 </head>
 <body>
 <div class="container">
-    <h2 th:text="${post.title}">Title</h2>
-    <h5 th:text="'Written by ' + ${post.account.firstName}">Account First Name</h5>
-    <h5 th:text="'Created on ' + ${post.createdAt}">Created Date</h5>
-    <p th:text="${post.body}">body text</p>
-    <hr/>
+    <a href="/">Home</a>
+    <div class="post">
+        <h2 th:text="${post.title}">Title</h2>
+        <h5 th:text="'Written by ' + ${post.account.firstName}">Account First Name</h5>
+        <h5 th:text="'Created on ' + ${post.createdAt}">Created Date</h5>
+        <h5 th:text="'Updated on ' + ${post.modifiedAt}">Updated At</h5>
+        <p th:text="${post.body}">body text</p>
+        <hr/>
+    </div>
+    <ul sec:authorize="isAuthenticated()">
+        <li><a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a></li>
+        <li><a th:href="@{'/posts/' + ${post.id} + '/delete'}">Delete</a></li>
+    </ul>
 </div>
 </body>
 </html>
