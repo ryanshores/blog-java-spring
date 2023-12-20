@@ -20,8 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
-    private static final String[] WHITELIST = { "/", "/register", "/h2-console/*"};
-
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -32,30 +30,43 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+    private static final String[] WHITELIST = { "/", "/register", "/h2-console/*", "/api/auth" };
+    private static final String LOGIN_URL = "/login";
+    private static final String LOGOUT_URL = "/logout";
+    private static final String LOGOUT_SUCCESS_URL = LOGIN_URL + "?logout";
+    private static final String LOGIN_FAIL_URL = LOGIN_URL + "?error";
+    private static final String POST_URL = "/post/**";
+    private static final String API_URL = "/api/**";
+    private static final String ADMIN_ROLE = "ROLE_ADMIN";
+    private static final String USERNAME = "email";
+    private static final String PASSWORD = "password";
+    private static final String COOKIE = "JSESSIONID";
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(WHITELIST).permitAll()
-                .requestMatchers(HttpMethod.GET,"/posts/*").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers(HttpMethod.GET,POST_URL).permitAll()
+                .requestMatchers(API_URL).permitAll()
                 .anyRequest()
                 .authenticated()
             )
             .formLogin(opts -> opts
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
+                .loginPage(LOGIN_URL)
+                .loginProcessingUrl(LOGIN_URL)
+                .usernameParameter(USERNAME)
+                .passwordParameter(PASSWORD)
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error")
+                .failureUrl(LOGIN_FAIL_URL)
                 .permitAll()
             )
             .logout(logout -> logout
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login?logout")
+                    .logoutUrl(LOGOUT_URL)
+                    .logoutSuccessUrl(LOGOUT_SUCCESS_URL)
                     .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
+                    .deleteCookies(COOKIE)
             )
             .httpBasic(Customizer.withDefaults());
 
