@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -48,8 +49,8 @@ public class WebSecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(WHITELIST).permitAll()
-                .requestMatchers(HttpMethod.GET,POST_URL).permitAll()
-                .requestMatchers(API_URL).permitAll()
+                .requestMatchers(HttpMethod.GET,POST_URL, API_URL).permitAll()
+                .requestMatchers(API_URL).hasAuthority(ADMIN_ROLE)
                 .anyRequest()
                 .authenticated()
             )
@@ -68,6 +69,7 @@ public class WebSecurityConfig {
                     .invalidateHttpSession(true)
                     .deleteCookies(COOKIE)
             )
+            .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .httpBasic(Customizer.withDefaults());
 
         // TODO: when moving away from h2 console this can be removed
